@@ -1,0 +1,142 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "printerServer"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+paths:
+  /api/v1/jobs/:
+    get:
+      tags:
+        - "jobs"
+      summary: "List available jobs"
+      operationId: "listJobs"
+      parameters: []
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/jobStatus"
+        "400":
+          description: "Not Good"
+          schema:
+            $ref: "#/definitions/invalidResponse"
+      x-swagger-router-controller: "jobs"
+
+    options:
+      tags:
+        - "jobs"
+      summary: "job options"
+      operationId: "jobOptions"
+      parameters: []
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/jobInfo"
+      x-swagger-router-controller: "jobs"
+
+    post:
+      tags:
+        - "jobs"
+      summary: "Create a job"
+      operationId: "createJob"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/jobInfo"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/jobInfo"
+      x-swagger-router-controller: "jobs"
+    delete:
+      tags:
+        - "jobs"
+      summary: "Delete a job"
+      operationId: "deleteJob"
+      parameters:
+        - name: "name"
+          in: "query"
+          description: "Name of the job to delete."
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/jobInfo"
+      x-swagger-router-controller: "jobs"
+  /api/v1/job/move/:
+    post:
+      tags:
+        - "job"
+      summary: "Move a job"
+      operationId: "moveJob"
+      parameters:
+        - name: "name"
+          in: "query"
+          description: "Name of the job."
+          required: true
+          type: "string"
+        - name: "up"
+          in: "query"
+          description: "Should move up or down."
+          required: false
+          type: "boolean"
+      responses:
+        "200":
+          description: "OK"
+      x-swagger-router-controller: "job"
+  /api/v1/job/cancel/:
+    post:
+      tags:
+        - "job"
+      summary: "cancel a job"
+      operationId: "cancelJob"
+      parameters:
+        - name: "name"
+          in: "query"
+          description: "Name of the job."
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+      x-swagger-router-controller: "job"
+definitions:
+  jobStatus:
+    properties:
+      status:
+        type: "string"
+        description: "name of the job"
+    allOf:
+      - $ref: "#/definitions/jobInfo"
+      - {}
+  jobInfo:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "name of the job"
+      duration:
+        type: "number"
+        description: "duration in sec"
+    example:
+      duration: 0.80082819046101150206595775671303272247314453125
+      name: "name"
+  invalidResponse:
+    type: "object"
+    properties:
+      statusCode:
+        type: "string"
+      message:
+        type: "string"
